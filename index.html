@@ -105,21 +105,21 @@
      so that on a phone the app name can sit above the picture. */
   .project {
     display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-    grid-template-rows: 1fr auto auto auto auto auto 1fr; column-gap: 48px; row-gap: 12px;
+    grid-template-rows: repeat(5, auto) 1fr; column-gap: 48px; row-gap: 12px;
   }
   .shot {
-    grid-column: 1; grid-row: 1 / -1; align-self: center;
+    grid-column: 1; grid-row: 1 / -1; align-self: start;
     width: 100%; min-width: 0; height: auto; aspect-ratio: 16 / 10; display: block;
     border: 1px solid var(--line); border-radius: 16px; background: #ffffff;
     object-fit: cover; object-position: top left;
   }
   .shot.center { object-position: top center; }
   .project-text { display: contents; }
-  .project h3 { grid-column: 2; grid-row: 2; font-size: 28px; line-height: 1.2; font-weight: 600; }
-  .project .kind { grid-column: 2; grid-row: 3; font-size: 14px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--mute); }
-  .project .desc { grid-column: 2; grid-row: 4; max-width: 48ch; color: var(--sub); }
-  .project .stack { grid-column: 2; grid-row: 5; font-size: 15px; color: var(--mute); }
-  .project a { grid-column: 2; grid-row: 6; justify-self: start; display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; color: var(--accent); }
+  .project h3 { grid-column: 2; grid-row: 1; font-size: 28px; line-height: 1.2; font-weight: 600; }
+  .project .kind { grid-column: 2; grid-row: 2; font-size: 14px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--mute); }
+  .project .desc { grid-column: 2; grid-row: 3; max-width: 48ch; color: var(--sub); }
+  .project .stack { grid-column: 2; grid-row: 4; font-size: 15px; color: var(--mute); }
+  .project a { grid-column: 2; grid-row: 5; justify-self: start; display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; color: var(--accent); }
   .project a:hover { color: #095a4e; }
 
   @media (max-width: 760px) {
