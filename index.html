@@ -101,20 +101,37 @@
   /* ---------- Work ---------- */
   .work { background: var(--band); }
   .work .wrap { padding-top: 96px; padding-bottom: 96px; display: flex; flex-direction: column; gap: 56px; }
-  .project { display: flex; flex-wrap: wrap; gap: 24px 48px; align-items: center; }
+  /* Picture on the left, text on the right. The text block is flattened into the grid
+     so that on a phone the app name can sit above the picture. */
+  .project {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    grid-template-rows: 1fr auto auto auto auto auto 1fr; column-gap: 48px; row-gap: 12px;
+  }
   .shot {
-    flex: 1 1 320px; min-width: 0; height: auto; aspect-ratio: 16 / 10; display: block;
+    grid-column: 1; grid-row: 1 / -1; align-self: center;
+    width: 100%; min-width: 0; height: auto; aspect-ratio: 16 / 10; display: block;
     border: 1px solid var(--line); border-radius: 16px; background: #ffffff;
     object-fit: cover; object-position: top left;
   }
   .shot.center { object-position: top center; }
-  .project-text { flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
-  .kind { font-size: 14px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--mute); }
-  .project h3 { font-size: 28px; line-height: 1.2; font-weight: 600; }
-  .project-text > p.desc { max-width: 48ch; color: var(--sub); }
-  .stack { font-size: 15px; color: var(--mute); }
-  .project a { display: inline-flex; align-items: center; align-self: flex-start; min-height: 44px; font-weight: 600; color: var(--accent); }
+  .project-text { display: contents; }
+  .project h3 { grid-column: 2; grid-row: 2; font-size: 28px; line-height: 1.2; font-weight: 600; }
+  .project .kind { grid-column: 2; grid-row: 3; font-size: 14px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--mute); }
+  .project .desc { grid-column: 2; grid-row: 4; max-width: 48ch; color: var(--sub); }
+  .project .stack { grid-column: 2; grid-row: 5; font-size: 15px; color: var(--mute); }
+  .project a { grid-column: 2; grid-row: 6; justify-self: start; display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; color: var(--accent); }
   .project a:hover { color: #095a4e; }
+
+  @media (max-width: 760px) {
+    .project { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+    .project h3, .project .kind, .project .shot, .project .desc, .project .stack, .project a { grid-column: 1; grid-row: auto; }
+    .project h3 { order: 1; }
+    .project .kind { order: 2; }
+    .project .shot { order: 3; margin: 8px 0; }
+    .project .desc { order: 4; }
+    .project .stack { order: 5; }
+    .project a { order: 6; }
+  }
 
   .chat { display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 24px; font-size: 14px; line-height: 1.4; }
   .chat p { max-width: 94%; padding: 10px 14px; text-wrap: balance; }
@@ -150,7 +167,7 @@
 
 <header class="wrap top">
   <nav aria-label="Sections">
-    <a href="#work">Work</a>
+    <a href="#work">My works</a>
     <a href="#help">How I help</a>
     <a href="#contact">Contact</a>
   </nav>
@@ -159,9 +176,9 @@
 <main>
   <section class="wrap hero" id="top">
     <div class="hero-text">
-      <p class="eyebrow">Currently Software Dev Team Lead at NeedList.ORG · Toronto</p>
+      <p class="eyebrow">Software Dev Team Lead at NeedList.ORG · MSc in Software Engineering · Toronto</p>
       <h1>Building tech that serves people.</h1>
-      <p class="hero-sub">I'm a software development team lead on a charitable giving platform. In my own time, I build web and mobile apps for my family and friends.</p>
+      <p class="hero-sub">I'm a software development team lead at a charity organization. In my own time, I build web and mobile apps for my family and friends.</p>
       <div class="actions">
         <a class="btn" href="#work">See my work</a>
         <a class="text-link" href="https://github.com/RakotosonFabien" target="_blank" rel="noopener">GitHub</a>
@@ -182,13 +199,13 @@
 
   <section class="work" id="work">
     <div class="wrap">
-      <h2>What I've built</h2>
+      <h2>My works</h2>
 
       <article class="project">
         <img class="shot" src="assets/family-expense-tracker.png" width="1440" height="900" loading="lazy" alt="Family Expense Tracker dashboard showing total spent, spending by category and recent expenses">
         <div class="project-text">
-          <p class="kind">Web and mobile app</p>
           <h3>Family Expense Tracker</h3>
+          <p class="kind">Web and mobile app</p>
           <p class="desc">One place for a household to track its spending, on the phone or on the web.</p>
           <p class="stack">TypeScript · React Native · NestJS · PostgreSQL</p>
           <a href="https://family-expense-tracker-app.onrender.com/" target="_blank" rel="noopener">Open the app</a>
@@ -198,8 +215,8 @@
       <article class="project">
         <img class="shot center" src="assets/learn-to-speak.png" width="1085" height="678" loading="lazy" alt="Two Learn to Speak phone screens: the welcome screen and a step asking you to say hello, with the word split into sounds">
         <div class="project-text">
-          <p class="kind">Web and mobile app</p>
           <h3>Learn to Speak</h3>
+          <p class="kind">Web and mobile app</p>
           <p class="desc">Nothing better than enriching your vocabulary. Look up a word, hear it, say it, and see which sounds you got wrong.</p>
           <p class="stack">TypeScript · React · NestJS · Python</p>
           <a href="https://learn-to-speak-app.onrender.com/" target="_blank" rel="noopener">Open the app</a>
@@ -213,10 +230,10 @@
           <p class="in">Parfait, je prends 2 svp.</p>
         </div>
         <div class="project-text">
-          <p class="kind">Sales chatbot</p>
           <h3>My OMG</h3>
+          <p class="kind">Sales chatbot</p>
           <p class="desc">A sales chatbot that also tracked stock. I ran it as a real business in Madagascar in 2024. It did not break even. The product worked.</p>
-          <p class="stack">Botpress · Make.com · Google Sheets</p>
+          <p class="stack">JavaScript · Botpress · Make.com · Google Sheets</p>
           <a href="https://www.facebook.com/reel/939729401234321" target="_blank" rel="noopener">Watch the story</a>
         </div>
       </article>
