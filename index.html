@@ -133,10 +133,21 @@
     .project a { order: 6; }
   }
 
-  .chat { display: flex; flex-direction: column; justify-content: center; gap: 12px; padding: 24px; font-size: 14px; line-height: 1.4; }
-  .chat p { max-width: 94%; padding: 10px 14px; text-wrap: balance; }
-  .chat .in { align-self: flex-start; border-radius: 16px 16px 16px 4px; background: #eef1f0; color: var(--ink); }
-  .chat .out { align-self: flex-end; border-radius: 16px 16px 4px 16px; background: var(--ink); color: #ffffff; }
+  /* My OMG: a small redraw of the real shop-in-a-chat flow */
+  .shot.shop { aspect-ratio: auto; display: flex; flex-direction: column; gap: 10px; padding: 18px; overflow: hidden; font-size: 13px; line-height: 1.35; }
+  .shop .msg { align-self: flex-start; max-width: 82%; padding: 8px 12px; border-radius: 14px 14px 14px 4px; background: #eef1f0; color: var(--ink); }
+  .shop .msg.me { align-self: flex-end; border-radius: 14px 14px 4px 14px; background: var(--ink); color: #ffffff; }
+  .shop .cards { display: flex; gap: 8px; margin-right: -18px; }
+  .shop .card { flex: 0 0 43%; min-width: 0; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #ffffff; }
+  .shop .pic { aspect-ratio: 16 / 9; display: grid; place-items: center; background: var(--accent-soft); }
+  .shop .pic svg { width: 40px; height: 40px; fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linejoin: round; }
+  .shop .body { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; }
+  .shop .name { font-weight: 600; }
+  .shop .meta { font-size: 12px; color: var(--mute); }
+  .shop .price { font-weight: 600; }
+  .shop .buy { margin: auto 10px 10px; padding: 6px; border-radius: 8px; background: #eef1f0; text-align: center; font-size: 12px; font-weight: 600; }
+  .shop .chips { display: flex; gap: 6px; overflow: hidden; }
+  .shop .chips span { padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; font-size: 12px; white-space: nowrap; }
 
   /* ---------- Help ---------- */
   .help { padding-top: 96px; padding-bottom: 96px; display: flex; flex-direction: column; gap: 48px; }
@@ -224,15 +235,32 @@
       </article>
 
       <article class="project">
-        <div class="shot chat" lang="fr" role="img" aria-label="A short chat: a customer asks if an item is in stock, the chatbot says four are left, and the customer orders two">
-          <p class="in">Bonjour, est-ce que cet article est en stock&nbsp;?</p>
-          <p class="out">Oui, il en reste 4. Voulez-vous commander&nbsp;?</p>
-          <p class="in">Parfait, je prends 2 svp.</p>
+        <div class="shot shop" role="img" aria-label="The My OMG shop inside a chat: the bot welcomes the customer, shows a row of product cards with size, stock left and price in ariary, and offers buttons to buy, see items or open the cart">
+          <p class="msg">Welcome to My OMG! Tap a button to browse or buy.</p>
+          <p class="msg me">Show me the items</p>
+          <div class="cards">
+            <div class="card">
+              <div class="pic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4l4 2 4-2 5 4-3 4-2-1v9H8v-9l-2 1-3-4z"/></svg></div>
+              <div class="body"><span class="name">N° 8 · Thermal sweatshirt</span><span class="meta">Black · M · 1 left</span><span class="price">75,000 Ar</span></div>
+              <div class="buy">Buy</div>
+            </div>
+            <div class="card">
+              <div class="pic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10l-1 6 3 10H5l3-10z"/></svg></div>
+              <div class="body"><span class="name">N° 11 · Skirt and top set</span><span class="meta">Black · S · 1 left</span><span class="price">50,000 Ar</span></div>
+              <div class="buy">Buy</div>
+            </div>
+            <div class="card">
+              <div class="pic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4l4 2 4-2 5 4-3 4-2-1v9H8v-9l-2 1-3-4z"/></svg></div>
+              <div class="body"><span class="name">N° 12 · Cropped sweatshirt</span><span class="meta">Grey · S · 1 left</span><span class="price">20,000 Ar</span></div>
+              <div class="buy">Buy</div>
+            </div>
+          </div>
+          <div class="chips"><span>Buy</span><span>See items</span><span>My cart</span><span>Talk to us</span></div>
         </div>
         <div class="project-text">
           <h3>My OMG</h3>
           <p class="kind">Sales chatbot</p>
-          <p class="desc">A sales chatbot that also tracked stock. I ran it as a real business in Madagascar in 2024. It did not break even. The product worked.</p>
+          <p class="desc">A whole shop inside a chat. Customers browse products with photos, see what is left in stock, fill a cart and order, all by tapping buttons. I ran it as a real business in Madagascar in 2024.</p>
           <p class="stack">JavaScript · Botpress · Make.com · Google Sheets</p>
           <a href="https://www.facebook.com/reel/939729401234321" target="_blank" rel="noopener">Watch the story</a>
         </div>
