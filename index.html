@@ -134,20 +134,24 @@
   }
 
   /* My OMG: a small redraw of the real shop-in-a-chat flow */
-  .shot.shop { aspect-ratio: auto; display: flex; flex-direction: column; gap: 10px; padding: 18px; overflow: hidden; font-size: 13px; line-height: 1.35; }
-  .shop .msg { align-self: flex-start; max-width: 82%; padding: 8px 12px; border-radius: 14px 14px 14px 4px; background: #eef1f0; color: var(--ink); }
-  .shop .msg.me { align-self: flex-end; border-radius: 14px 14px 4px 14px; background: var(--ink); color: #ffffff; }
-  .shop .cards { display: flex; gap: 8px; margin-right: -18px; }
-  .shop .card { flex: 0 0 43%; min-width: 0; display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #ffffff; }
-  .shop .pic { aspect-ratio: 16 / 9; display: grid; place-items: center; background: var(--accent-soft); }
-  .shop .pic svg { width: 40px; height: 40px; fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-linejoin: round; }
+  .shot.shop {
+    aspect-ratio: auto; display: flex; flex-direction: column; gap: 10px; padding: 18px; overflow: hidden;
+    font-size: 13px; line-height: 1.35; background: #242526; border-color: #242526; color: #e4e6eb;
+  }
+  .shop .msg { align-self: flex-start; max-width: 82%; padding: 8px 12px; border-radius: 16px 16px 16px 4px; background: #3a3b3c; }
+  .shop .msg.me { align-self: flex-end; border-radius: 16px 16px 4px 16px; background: #7a3cf0; color: #ffffff; }
+  .shop .cards { display: flex; gap: 6px; margin-right: -18px; }
+  .shop .card { flex: 0 0 43%; min-width: 0; display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; background: #3a3b3c; }
+  .shop .pic { aspect-ratio: 16 / 9; display: grid; place-items: center; background: #e9e4dc; }
+  .shop .pic svg { width: 40px; height: 40px; fill: #1c1e21; stroke: #1c1e21; stroke-width: 1.5; stroke-linejoin: round; }
   .shop .body { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; }
   .shop .name { font-weight: 600; }
-  .shop .meta { font-size: 12px; color: var(--mute); }
+  .shop .meta { font-size: 12px; color: #b0b3b8; }
   .shop .price { font-weight: 600; }
-  .shop .buy { margin: auto 10px 10px; padding: 6px; border-radius: 8px; background: #eef1f0; text-align: center; font-size: 12px; font-weight: 600; }
+  .shop .btns { display: grid; gap: 6px; margin: auto 10px 10px; }
+  .shop .buy { padding: 6px; border-radius: 8px; background: #4e4f50; text-align: center; font-size: 12px; font-weight: 600; }
   .shop .chips { display: flex; gap: 6px; overflow: hidden; }
-  .shop .chips span { padding: 5px 10px; border: 1px solid var(--line); border-radius: 999px; font-size: 12px; white-space: nowrap; }
+  .shop .chips span { padding: 6px 12px; border-radius: 999px; background: #3a3b3c; font-size: 12px; font-weight: 500; white-space: nowrap; }
 
   /* ---------- Help ---------- */
   .help { padding-top: 96px; padding-bottom: 96px; display: flex; flex-direction: column; gap: 48px; }
@@ -242,17 +246,17 @@
             <div class="card">
               <div class="pic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4l4 2 4-2 5 4-3 4-2-1v9H8v-9l-2 1-3-4z"/></svg></div>
               <div class="body"><span class="name">N° 8 · Thermal sweatshirt</span><span class="meta">Black · M · 1 left</span><span class="price">75,000 Ar</span></div>
-              <div class="buy">Buy</div>
+              <div class="btns"><div class="buy">Big picture</div><div class="buy">Copy N°</div></div>
             </div>
             <div class="card">
               <div class="pic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10l-1 6 3 10H5l3-10z"/></svg></div>
               <div class="body"><span class="name">N° 11 · Skirt and top set</span><span class="meta">Black · S · 1 left</span><span class="price">50,000 Ar</span></div>
-              <div class="buy">Buy</div>
+              <div class="btns"><div class="buy">Big picture</div><div class="buy">Copy N°</div></div>
             </div>
             <div class="card">
               <div class="pic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4l4 2 4-2 5 4-3 4-2-1v9H8v-9l-2 1-3-4z"/></svg></div>
               <div class="body"><span class="name">N° 12 · Cropped sweatshirt</span><span class="meta">Grey · S · 1 left</span><span class="price">20,000 Ar</span></div>
-              <div class="buy">Buy</div>
+              <div class="btns"><div class="buy">Big picture</div><div class="buy">Copy N°</div></div>
             </div>
           </div>
           <div class="chips"><span>Buy</span><span>See items</span><span>My cart</span><span>Talk to us</span></div>
