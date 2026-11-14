@@ -140,7 +140,11 @@
   }
   .shop-head { flex: none; display: flex; align-items: center; gap: 10px; padding: 10px 10px 10px 16px; }
   .shop-id { flex: 1; min-width: 0; }
-  .shop-arrows { flex: none; display: flex; gap: 8px; }
+  .shop-id span { white-space: nowrap; }
+  .shop-arrows { flex: none; display: flex; gap: 6px; }
+  .shop-arrows button[hidden] { display: none; }
+  .shop-pause .i-play, .shop.is-paused .shop-pause .i-pause { display: none; }
+  .shop.is-paused .shop-pause .i-play { display: block; }
   .shop-bars { flex: none; display: flex; gap: 4px; padding: 0 16px 12px; border-bottom: 1px solid #3a3b3c; }
   .shop-bars span { flex: 1; height: 3px; border-radius: 2px; overflow: hidden; background: #4e4f50; }
   .shop-bars i { display: block; width: 0; height: 100%; border-radius: 2px; background: #e4e6eb; transition: width .1s linear; }
@@ -156,7 +160,7 @@
   }
   .shop-page.is-active { visibility: visible; opacity: 1; transition: opacity .35s ease; }
   .shop-arrows button {
-    width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%;
+    width: 42px; height: 42px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%;
     background: #3a3b3c; color: #e4e6eb; cursor: pointer;
   }
   .shop-arrows button:hover { background: #4e4f50; }
@@ -168,7 +172,8 @@
   .shop .thumb svg { width: 24px; height: 24px; fill: #1c1e21; }
   .shop .cart .row { display: flex; justify-content: space-between; gap: 12px; }
   .shop .cart .total { padding-top: 8px; border-top: 1px solid #4e4f50; font-weight: 600; }
-  .shop .note { align-self: center; max-width: 90%; margin-top: 4px; text-align: center; font-size: 12px; color: #b0b3b8; }
+  /* Sits at the bottom of the last step, apart from the conversation. */
+  .shop .note { margin-top: auto; padding-top: 12px; border-top: 1px solid #3a3b3c; text-align: center; font-size: 12px; color: #b0b3b8; }
   .shop .msg { align-self: flex-start; max-width: 82%; padding: 8px 12px; border-radius: 16px 16px 16px 4px; background: #3a3b3c; }
   .shop .msg.me { align-self: flex-end; border-radius: 16px 16px 4px 16px; background: #7a3cf0; color: #ffffff; }
   .shop .cards { display: flex; gap: 6px; margin-right: -16px; overflow: hidden; }
@@ -276,6 +281,7 @@
             <img src="assets/my-omg-logo.jpg" width="36" height="36" alt="My OMG logo">
             <div class="shop-id"><strong>My OMG</strong><span><span class="shop-count">1 of 4</span> · <span class="shop-title">Browse</span></span></div>
             <div class="shop-arrows">
+              <button type="button" class="shop-pause" aria-label="Pause the demo"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l9 6-9 6z"/></svg></button>
               <button type="button" class="shop-prev" aria-label="Previous step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
               <button type="button" class="shop-next" aria-label="Next step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
             </div>
@@ -413,10 +419,19 @@
     var onScreen = false;
     var hovering = false;
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var pauseBtn = shop.querySelector('.shop-pause');
+    var paused = false;
+
+    function setPaused(value) {
+      paused = value;
+      shop.classList.toggle('is-paused', paused);
+      pauseBtn.setAttribute('aria-label', paused ? 'Play the demo' : 'Pause the demo');
+      paintBars();
+    }
 
     function paintBars() {
       fills.forEach(function (fill, n) {
-        var part = n < index ? 1 : n > index ? 0 : (reduceMotion ? 1 : Math.min(elapsed / STEP_MS, 1));
+        var part = n < index ? 1 : n > index ? 0 : (reduceMotion || (paused && elapsed === 0) ? 1 : Math.min(elapsed / STEP_MS, 1));
         fill.style.width = (part * 100) + '%';
       });
     }
@@ -434,8 +449,10 @@
       paintBars();
     }
 
-    shop.querySelector('.shop-prev').addEventListener('click', function () { show(index - 1); });
-    shop.querySelector('.shop-next').addEventListener('click', function () { show(index + 1); });
+    // Using an arrow means the visitor is reading at their own pace, so the timer stops.
+    shop.querySelector('.shop-prev').addEventListener('click', function () { show(index - 1); setPaused(true); });
+    shop.querySelector('.shop-next').addEventListener('click', function () { show(index + 1); setPaused(true); });
+    pauseBtn.addEventListener('click', function () { setPaused(!paused); });
     shop.addEventListener('mouseenter', function () { hovering = true; });
     shop.addEventListener('mouseleave', function () { hovering = false; });
     shop.addEventListener('focusin', function () { hovering = true; });
@@ -450,7 +467,7 @@
     }
 
     show(0);
-    if (reduceMotion) return;
+    if (reduceMotion) { pauseBtn.hidden = true; return; }
 
     // A timer, not animation frames: it keeps honest time even when the browser
     // slows drawing down. One tick never counts for more than a second, so the
@@ -461,7 +478,7 @@
       var step = Math.min(now - last, 1000);
       last = now;
       // The bar only runs while the demo is on screen and nobody is pointing at it.
-      if (onScreen && !hovering && !document.hidden) {
+      if (onScreen && !hovering && !paused && !document.hidden) {
         elapsed += step;
         if (elapsed >= STEP_MS) show(index + 1); else paintBars();
       }
