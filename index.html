@@ -138,7 +138,12 @@
     aspect-ratio: auto; display: flex; flex-direction: column; overflow: hidden;
     font-size: 13px; line-height: 1.35; background: #242526; border-color: #242526; color: #e4e6eb;
   }
-  .shop-head { flex: none; display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid #3a3b3c; }
+  .shop-head { flex: none; display: flex; align-items: center; gap: 10px; padding: 10px 10px 10px 16px; }
+  .shop-id { flex: 1; min-width: 0; }
+  .shop-arrows { flex: none; display: flex; gap: 8px; }
+  .shop-bars { flex: none; display: flex; gap: 4px; padding: 0 16px 12px; border-bottom: 1px solid #3a3b3c; }
+  .shop-bars span { flex: 1; height: 3px; border-radius: 2px; background: #4e4f50; }
+  .shop-bars span.on { background: #e4e6eb; }
   .shop-head img { width: 36px; height: 36px; border-radius: 50%; display: block; }
   .shop-head strong { display: block; font-size: 14px; }
   .shop-head span { font-size: 12px; color: #b0b3b8; }
@@ -150,17 +155,13 @@
     overflow: hidden; visibility: hidden; opacity: 0; transition: opacity .35s ease, visibility 0s linear .35s;
   }
   .shop-page.is-active { visibility: visible; opacity: 1; transition: opacity .35s ease; }
-  .shop-nav { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 8px; border-top: 1px solid #3a3b3c; }
-  .shop-nav button {
+  .shop-arrows button {
     width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%;
     background: #3a3b3c; color: #e4e6eb; cursor: pointer;
   }
-  .shop-nav button:hover { background: #4e4f50; }
-  .shop-nav button:focus-visible { outline: 3px solid #ffffff; outline-offset: 2px; }
-  .shop-nav svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-  .shop-where { display: flex; flex-direction: column; align-items: center; line-height: 1.25; }
-  .shop-title { font-size: 14px; font-weight: 600; }
-  .shop-count { font-size: 12px; color: #b0b3b8; }
+  .shop-arrows button:hover { background: #4e4f50; }
+  .shop-arrows button:focus-visible { outline: 3px solid #ffffff; outline-offset: 2px; }
+  .shop-arrows svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
   .shop .cart { align-self: flex-start; width: 86%; display: grid; gap: 8px; padding: 12px; border-radius: 12px; background: #3a3b3c; }
   .shop .cart .item { display: flex; align-items: center; gap: 10px; }
   .shop .thumb { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 8px; background: #e9e4dc; }
@@ -273,8 +274,13 @@
         <div class="shot shop">
           <div class="shop-head">
             <img src="assets/my-omg-logo.jpg" width="36" height="36" alt="My OMG logo">
-            <div><strong>My OMG</strong><span>Demo of a real order, in four steps</span></div>
+            <div class="shop-id"><strong>My OMG</strong><span><span class="shop-count">1 of 4</span> · <span class="shop-title">Browse</span></span></div>
+            <div class="shop-arrows">
+              <button type="button" class="shop-prev" aria-label="Previous step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+              <button type="button" class="shop-next" aria-label="Next step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+            </div>
           </div>
+          <div class="shop-bars" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span></div>
           <div class="shop-pages">
           <div class="shop-page is-active" data-title="Browse">
           <p class="msg">Welcome to My OMG! You can use the chatbot or talk to us. Tap a button to choose.</p>
@@ -330,11 +336,6 @@
           <p class="msg">Thank you, Rina! Your order is confirmed.</p>
           <p class="note">Behind the scenes, the order is emailed to the shop and saved to Google Sheets.</p>
           </div>
-          </div>
-          <div class="shop-nav">
-            <button type="button" class="shop-prev" aria-label="Previous step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
-            <p class="shop-where"><span class="shop-title">Browse</span><span class="shop-count">1 of 4</span></p>
-            <button type="button" class="shop-next" aria-label="Next step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
           </div>
         </div>
         <div class="project-text">
@@ -403,6 +404,7 @@
     var pages = shop.querySelectorAll('.shop-page');
     var title = shop.querySelector('.shop-title');
     var count = shop.querySelector('.shop-count');
+    var bars = shop.querySelectorAll('.shop-bars span');
     var index = 0;
     var onScreen = false;
     var hovering = false;
@@ -416,6 +418,7 @@
         page.classList.toggle('is-active', active);
         page.setAttribute('aria-hidden', active ? 'false' : 'true');
       });
+      bars.forEach(function (bar, n) { bar.classList.toggle('on', n <= index); });
       title.textContent = pages[index].dataset.title;
       count.textContent = (index + 1) + ' of ' + pages.length;
     }
