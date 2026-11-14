@@ -135,20 +135,32 @@
 
   /* My OMG: a small redraw of the real shop-in-a-chat flow */
   .shot.shop {
-    aspect-ratio: auto; height: 500px; display: flex; flex-direction: column; overflow: hidden;
+    aspect-ratio: auto; display: flex; flex-direction: column; overflow: hidden;
     font-size: 13px; line-height: 1.35; background: #242526; border-color: #242526; color: #e4e6eb;
   }
   .shop-head { flex: none; display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid #3a3b3c; }
   .shop-head img { width: 36px; height: 36px; border-radius: 50%; display: block; }
   .shop-head strong { display: block; font-size: 14px; }
   .shop-head span { font-size: 12px; color: #b0b3b8; }
-  .shop-body {
-    flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 16px;
-    scrollbar-width: thin; scrollbar-color: #4e4f50 transparent;
+  /* The four steps are stacked in one grid cell, so the window is as tall as the
+     tallest step and nothing inside it scrolls. Only the active step is shown. */
+  .shop-pages { flex: 1; display: grid; }
+  .shop-page {
+    grid-area: 1 / 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; padding: 16px;
+    overflow: hidden; visibility: hidden; opacity: 0; transition: opacity .35s ease, visibility 0s linear .35s;
   }
-  .shop-body > * { flex: none; }
-  .shop .step { align-self: center; margin-top: 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #b0b3b8; }
-  .shop .step:first-child { margin-top: 0; }
+  .shop-page.is-active { visibility: visible; opacity: 1; transition: opacity .35s ease; }
+  .shop-nav { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 8px; border-top: 1px solid #3a3b3c; }
+  .shop-nav button {
+    width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%;
+    background: #3a3b3c; color: #e4e6eb; cursor: pointer;
+  }
+  .shop-nav button:hover { background: #4e4f50; }
+  .shop-nav button:focus-visible { outline: 3px solid #ffffff; outline-offset: 2px; }
+  .shop-nav svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .shop-where { display: flex; flex-direction: column; align-items: center; line-height: 1.25; }
+  .shop-title { font-size: 14px; font-weight: 600; }
+  .shop-count { font-size: 12px; color: #b0b3b8; }
   .shop .cart { align-self: flex-start; width: 86%; display: grid; gap: 8px; padding: 12px; border-radius: 12px; background: #3a3b3c; }
   .shop .cart .item { display: flex; align-items: center; gap: 10px; }
   .shop .thumb { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 8px; background: #e9e4dc; }
@@ -158,7 +170,7 @@
   .shop .note { align-self: center; max-width: 90%; margin-top: 4px; text-align: center; font-size: 12px; color: #b0b3b8; }
   .shop .msg { align-self: flex-start; max-width: 82%; padding: 8px 12px; border-radius: 16px 16px 16px 4px; background: #3a3b3c; }
   .shop .msg.me { align-self: flex-end; border-radius: 16px 16px 4px 16px; background: #7a3cf0; color: #ffffff; }
-  .shop .cards { display: flex; gap: 6px; margin-right: -16px; padding-right: 16px; overflow-x: auto; scrollbar-width: thin; scrollbar-color: #4e4f50 transparent; }
+  .shop .cards { display: flex; gap: 6px; margin-right: -16px; overflow: hidden; }
   .shop .card { flex: 0 0 43%; min-width: 0; display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; background: #3a3b3c; }
   .shop .pic { aspect-ratio: 16 / 9; display: grid; place-items: center; background: #e9e4dc; }
   .shop .pic svg { width: 40px; height: 40px; fill: #1c1e21; stroke: #1c1e21; stroke-width: 1.5; stroke-linejoin: round; }
@@ -193,6 +205,7 @@
     html { scroll-behavior: auto; }
     .hey-1, .hey-2, .hey-typing span { animation: none; }
     .hey-typing { display: none; }
+    .shop-page, .shop-page.is-active { transition: none; }
   }
 </style>
 </head>
@@ -260,10 +273,10 @@
         <div class="shot shop">
           <div class="shop-head">
             <img src="assets/my-omg-logo.jpg" width="36" height="36" alt="My OMG logo">
-            <div><strong>My OMG</strong><span>Demo of a real order · scroll to follow it</span></div>
+            <div><strong>My OMG</strong><span>Demo of a real order, in four steps</span></div>
           </div>
-          <div class="shop-body" tabindex="0" role="region" aria-label="My OMG chat demo: an order from browsing to checkout">
-          <p class="step">1 · Browse</p>
+          <div class="shop-pages">
+          <div class="shop-page is-active" data-title="Browse">
           <p class="msg">Welcome to My OMG! You can use the chatbot or talk to us. Tap a button to choose.</p>
           <p class="msg me">Use the chatbot</p>
           <div class="cards">
@@ -283,20 +296,21 @@
               <div class="btns"><div class="buy">Big picture</div><div class="buy">Copy N°</div></div>
             </div>
           </div>
-          <p class="msg">Tap "Buy" under what you want. You can look at more items before or after buying.</p>
           <div class="chips"><span>Buy</span><span>See items</span><span>My cart</span><span>Talk to us</span></div>
+          </div>
 
-          <p class="step">2 · Add to cart</p>
+          <div class="shop-page" data-title="Add to cart">
           <p class="msg me">Buy</p>
           <p class="msg">Which item number (N°) do you want? One at a time.</p>
           <p class="msg me">8</p>
           <p class="msg">How many of N° 8, black M? (Stock: 1)</p>
           <p class="msg me">1</p>
           <p class="msg">N° 8 · Thermal sweatshirt · 75,000 Ar<br>Added 1 to your cart.</p>
-          <p class="msg">In your cart:<br>Items: 1<br>Total: 75,000 Ar<br>Weight: about 1 kg<br>Delivery (0 to 7 kg): 3,000 Ar</p>
+          <p class="msg">In your cart: 1 item, 75,000 Ar<br>Weight: about 1 kg<br>Delivery (0 to 7 kg): 3,000 Ar</p>
           <div class="chips"><span>My cart</span><span>Buy another</span><span>Find an item</span></div>
+          </div>
 
-          <p class="step">3 · Cart</p>
+          <div class="shop-page" data-title="Cart">
           <p class="msg me">My cart</p>
           <div class="cart">
             <div class="item">
@@ -307,13 +321,20 @@
             <div class="row"><span>Delivery</span><span>3,000 Ar</span></div>
             <div class="row total"><span>Total</span><span>78,000 Ar</span></div>
           </div>
+          </div>
 
-          <p class="step">4 · Checkout</p>
+          <div class="shop-page" data-title="Checkout">
           <p class="msg">To finish, send your name, delivery address and phone number.</p>
           <p class="msg me">Rina, Lot 12 Analakely Antananarivo, 034 00 000 00</p>
           <p class="msg">Name: Rina<br>Address: Lot 12 Analakely, Antananarivo<br>Phone: 034 00 000 00</p>
           <p class="msg">Thank you, Rina! Your order is confirmed.</p>
           <p class="note">Behind the scenes, the order is emailed to the shop and saved to Google Sheets.</p>
+          </div>
+          </div>
+          <div class="shop-nav">
+            <button type="button" class="shop-prev" aria-label="Previous step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+            <p class="shop-where"><span class="shop-title">Browse</span><span class="shop-count">1 of 4</span></p>
+            <button type="button" class="shop-next" aria-label="Next step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
           </div>
         </div>
         <div class="project-text">
@@ -372,6 +393,59 @@
       link.href = 'mailto:' + addr;
       revealed = true;
     });
+  })();
+
+  // My OMG demo: four steps shown one at a time. It moves on by itself every few
+  // seconds while it is on screen, and the arrows let a visitor step through it.
+  (function () {
+    var shop = document.querySelector('.shop');
+    if (!shop) return;
+    var pages = shop.querySelectorAll('.shop-page');
+    var title = shop.querySelector('.shop-title');
+    var count = shop.querySelector('.shop-count');
+    var index = 0;
+    var onScreen = false;
+    var hovering = false;
+    var pausedUntil = 0;
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function show(i) {
+      index = (i + pages.length) % pages.length;
+      pages.forEach(function (page, n) {
+        var active = n === index;
+        page.classList.toggle('is-active', active);
+        page.setAttribute('aria-hidden', active ? 'false' : 'true');
+      });
+      title.textContent = pages[index].dataset.title;
+      count.textContent = (index + 1) + ' of ' + pages.length;
+    }
+
+    function byHand(step) {
+      show(index + step);
+      pausedUntil = Date.now() + 12000; // give the visitor time to read what they chose
+    }
+
+    shop.querySelector('.shop-prev').addEventListener('click', function () { byHand(-1); });
+    shop.querySelector('.shop-next').addEventListener('click', function () { byHand(1); });
+    shop.addEventListener('mouseenter', function () { hovering = true; });
+    shop.addEventListener('mouseleave', function () { hovering = false; });
+    shop.addEventListener('focusin', function () { hovering = true; });
+    shop.addEventListener('focusout', function () { hovering = false; });
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        onScreen = entries[0].isIntersecting;
+      }, { threshold: 0.5 }).observe(shop);
+    } else {
+      onScreen = true;
+    }
+
+    show(0);
+    if (!reduceMotion) {
+      setInterval(function () {
+        if (onScreen && !hovering && !document.hidden && Date.now() > pausedUntil) show(index + 1);
+      }, 5000);
+    }
   })();
 </script>
 </body>
