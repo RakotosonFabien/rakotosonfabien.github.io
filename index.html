@@ -142,8 +142,8 @@
   .shop-id { flex: 1; min-width: 0; }
   .shop-arrows { flex: none; display: flex; gap: 8px; }
   .shop-bars { flex: none; display: flex; gap: 4px; padding: 0 16px 12px; border-bottom: 1px solid #3a3b3c; }
-  .shop-bars span { flex: 1; height: 3px; border-radius: 2px; background: #4e4f50; }
-  .shop-bars span.on { background: #e4e6eb; }
+  .shop-bars span { flex: 1; height: 3px; border-radius: 2px; overflow: hidden; background: #4e4f50; }
+  .shop-bars i { display: block; width: 0; height: 100%; border-radius: 2px; background: #e4e6eb; transition: width .1s linear; }
   .shop-head img { width: 36px; height: 36px; border-radius: 50%; display: block; }
   .shop-head strong { display: block; font-size: 14px; }
   .shop-head span { font-size: 12px; color: #b0b3b8; }
@@ -280,7 +280,7 @@
               <button type="button" class="shop-next" aria-label="Next step"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
             </div>
           </div>
-          <div class="shop-bars" aria-hidden="true"><span class="on"></span><span></span><span></span><span></span></div>
+          <div class="shop-bars" aria-hidden="true"><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span></div>
           <div class="shop-pages">
           <div class="shop-page is-active" data-title="Browse">
           <p class="msg">Welcome to My OMG! You can use the chatbot or talk to us. Tap a button to choose.</p>
@@ -396,40 +396,46 @@
     });
   })();
 
-  // My OMG demo: four steps shown one at a time. It moves on by itself every few
-  // seconds while it is on screen, and the arrows let a visitor step through it.
+  // My OMG demo: four steps shown one at a time, like a story. The bar for the
+  // current step fills up over a few seconds, then the demo moves to the next step,
+  // so a visitor can see the change coming. The arrows step through it by hand.
   (function () {
     var shop = document.querySelector('.shop');
     if (!shop) return;
+    var STEP_MS = 6000;
     var pages = shop.querySelectorAll('.shop-page');
+    var fills = shop.querySelectorAll('.shop-bars i');
     var title = shop.querySelector('.shop-title');
     var count = shop.querySelector('.shop-count');
-    var bars = shop.querySelectorAll('.shop-bars span');
     var index = 0;
+    var elapsed = 0;
+    var last = 0;
     var onScreen = false;
     var hovering = false;
-    var pausedUntil = 0;
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function paintBars() {
+      fills.forEach(function (fill, n) {
+        var part = n < index ? 1 : n > index ? 0 : (reduceMotion ? 1 : Math.min(elapsed / STEP_MS, 1));
+        fill.style.width = (part * 100) + '%';
+      });
+    }
 
     function show(i) {
       index = (i + pages.length) % pages.length;
+      elapsed = 0;
       pages.forEach(function (page, n) {
         var active = n === index;
         page.classList.toggle('is-active', active);
         page.setAttribute('aria-hidden', active ? 'false' : 'true');
       });
-      bars.forEach(function (bar, n) { bar.classList.toggle('on', n <= index); });
       title.textContent = pages[index].dataset.title;
       count.textContent = (index + 1) + ' of ' + pages.length;
+      paintBars();
     }
 
-    function byHand(step) {
-      show(index + step);
-      pausedUntil = Date.now() + 12000; // give the visitor time to read what they chose
-    }
-
-    shop.querySelector('.shop-prev').addEventListener('click', function () { byHand(-1); });
-    shop.querySelector('.shop-next').addEventListener('click', function () { byHand(1); });
+    shop.querySelector('.shop-prev').addEventListener('click', function () { show(index - 1); });
+    shop.querySelector('.shop-next').addEventListener('click', function () { show(index + 1); });
     shop.addEventListener('mouseenter', function () { hovering = true; });
     shop.addEventListener('mouseleave', function () { hovering = false; });
     shop.addEventListener('focusin', function () { hovering = true; });
@@ -444,11 +450,22 @@
     }
 
     show(0);
-    if (!reduceMotion) {
-      setInterval(function () {
-        if (onScreen && !hovering && !document.hidden && Date.now() > pausedUntil) show(index + 1);
-      }, 5000);
-    }
+    if (reduceMotion) return;
+
+    // A timer, not animation frames: it keeps honest time even when the browser
+    // slows drawing down. One tick never counts for more than a second, so the
+    // bar does not jump ahead after the browser has been asleep.
+    last = Date.now();
+    setInterval(function () {
+      var now = Date.now();
+      var step = Math.min(now - last, 1000);
+      last = now;
+      // The bar only runs while the demo is on screen and nobody is pointing at it.
+      if (onScreen && !hovering && !document.hidden) {
+        elapsed += step;
+        if (elapsed >= STEP_MS) show(index + 1); else paintBars();
+      }
+    }, 100);
   })();
 </script>
 </body>
